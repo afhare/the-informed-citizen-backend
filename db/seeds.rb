@@ -118,7 +118,7 @@ congressional_districts.each do |state|
                 senate_rep.seniority = senator["seniority"]
                 senate_rep.next_election = senator["next_election"]
                 senate_rep_state = State.find_by(abbreviation: state[:state_abbreviation])
-                senate_rep.state_id = rep_state.id
+                senate_rep.state_id = senate_rep_state.id
                 senate_rep.save
         end
     else
