@@ -101,7 +101,7 @@ congressional_districts.each do |state|
 
     senate_test_array = JSON.parse(senate_response)
     senate_results = senate_test_array["results"]
-
+    
     if senate_results.length > 0
         senate_results.each do |senator|
                 senate_rep = Senator.new
@@ -122,21 +122,30 @@ congressional_districts.each do |state|
                 senate_rep.save
         end
     else
-        vacant_senator = Senator.new
-        vacant_senator.name = "Vacancy"
-        vacant_senator.first_name = nil
-        vacant_senator.last_name = nil
-        vacant_senator.role = nil
-        vacant_senator.chamber = "Senate"
-        vacant_senator.gender = nil
-        vacant_senator.party = nil
-        vacant_senator.new_york_times_url = nil
-        vacant_senator.twitter_id = nil
-        vacant_senator.facebook_account = nil
-        vacant_senator.seniority = nil
-        vacant_senator.next_election = nil
-        vacant_senator_state = State.find_by(abbreviation: state[:state_abbreviation])
-        vacant_senator.state_id = vacant_senator_state.id
-        vacant_senator.save
+        case state[:state_abbreviation]
+        when 'DC'
+        when 'VI'
+        when 'AS'
+        when 'MP'
+        when 'PR'
+        when 'GU'
+        else
+            vacant_senator = Senator.new
+            vacant_senator.name = "Vacancy"
+            vacant_senator.first_name = nil
+            vacant_senator.last_name = nil
+            vacant_senator.role = nil
+            vacant_senator.chamber = "Senate"
+            vacant_senator.gender = nil
+            vacant_senator.party = nil
+            vacant_senator.new_york_times_url = nil
+            vacant_senator.twitter_id = nil
+            vacant_senator.facebook_account = nil
+            vacant_senator.seniority = nil
+            vacant_senator.next_election = nil
+            vacant_senator_state = State.find_by(abbreviation: state[:state_abbreviation])
+            vacant_senator.state_id = vacant_senator_state.id
+            vacant_senator.save
+        end
     end
 end
