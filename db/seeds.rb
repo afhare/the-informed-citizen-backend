@@ -39,7 +39,6 @@ csv.each do |row|
     state.save
 end
 
-
 #HOUSE REPS
 PROPUBLICA_API_KEY = "4oZZxKDuDfCLINOYoq3rriQgVzTsyzDyz0Fw8OdV"
 
