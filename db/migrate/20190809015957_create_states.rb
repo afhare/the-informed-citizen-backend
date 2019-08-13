@@ -16,8 +16,8 @@ class CreateStates < ActiveRecord::Migration[5.2]
       t.date :twenty_twenty_general_election_date
       t.string :id_required
       t.boolean :early_or_in_person_absentee_voting
-      t.date :early_or_in_person_absentee_voting_begins
-      t.date :early_or_in_person_absentee_voting_ends
+      t.string :early_or_in_person_absentee_voting_begins
+      t.string :early_or_in_person_absentee_voting_ends
       t.boolean :automatic_voter_registration
       t.boolean :same_day_voter_registration
       t.boolean :online_voter_registration

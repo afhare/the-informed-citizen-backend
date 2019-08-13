@@ -11,6 +11,12 @@ require 'csv'
 
 # pro_publica_API_key = '4oZZxKDuDfCLINOYoq3rriQgVzTsyzDyz0Fw8OdV'
 # open_secrets_API_key = 'cfa9bbaf09310e8550a687fa64d10751'
+Congressrepresentative.destroy_all
+Senator.destroy_all
+Representative.destroy_all
+User.destroy_all
+State.destroy_all
+
 
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'state-data.csv'))
 csv = CSV.parse(csv_text, :headers => true, :encoding => 'ISO-8859-1')
@@ -31,13 +37,21 @@ csv.each do |row|
     state.twenty_twenty_general_election_date = row['2020 Gen Election Date']
     state.id_required = row['ID Required']
     state.early_or_in_person_absentee_voting = row['No-excuse Early Voting']
-    state.early_or_in_person_absentee_voting_begins = row['Early voting/in person absentee voting begins']
+    state.early_or_in_person_absentee_voting_begins = row['Early voting or in person absentee voting begins']
     state.early_or_in_person_absentee_voting_ends = row['Early voting ends']
     state.automatic_voter_registration = row['Automatic Voter Registration?']
     state.same_day_voter_registration = row['Same day voter registration?']
     state.online_voter_registration = row['Online voter registration?']
     state.save
 end
+
+users = [
+  {name: "Alex", username: "rabbitjustice", password: "pass123", street_address:"515 N State" , city:"Chicago" , user_state:"IL", zipcode:"60654", state_id: State.find_by(abbreviation:"IL").id},
+  {name: "Ana", username: "electhare", password: "pass456", street_address: "783 Tonowanda St" , city: "Buffalo" , user_state: "NY", zipcode: "14207", state_id: State.find_by(abbreviation:"NY").id},
+  {name: "Nate", username: "bunnyvoter", password: "pass789", street_address:"382 Metropolitan Ave" , city:"Brooklyn" , user_state:"NY", zipcode:"11211", state_id: State.find_by(abbreviation:"NY").id}
+]
+
+users.each {|user| User.create(user)}
 
 #HOUSE REPS
 PROPUBLICA_API_KEY = "4oZZxKDuDfCLINOYoq3rriQgVzTsyzDyz0Fw8OdV"

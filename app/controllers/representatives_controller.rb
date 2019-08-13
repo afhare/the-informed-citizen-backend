@@ -11,7 +11,7 @@ class RepresentativesController < ApplicationController
             render json: representative.to_json(:include => {
                 :state => {:only => [:id, :name, :abbreviation]}}, except: [:created_at, :updated_at])
         else
-            render json: { message: 'State not found'}
+            render json: { message: 'Representative not found'}
         end
     end
 end

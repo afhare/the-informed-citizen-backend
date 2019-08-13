@@ -11,7 +11,7 @@ class SenatorsController < ApplicationController
             render json: senator.to_json(:include => {
                 :state => {:only => [:id, :name, :abbreviation]}}, except: [:created_at, :updated_at])
         else
-            render json: { message: 'State not found'}
+            render json: { message: 'Senator not found'}
         end
     end
 end
