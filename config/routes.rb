@@ -3,4 +3,5 @@ Rails.application.routes.draw do
   resources :states
   resources :representatives
   resources :senators
+  resources :users
 end

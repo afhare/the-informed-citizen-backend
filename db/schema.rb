@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_10_175639) do
+ActiveRecord::Schema.define(version: 2019_08_13_153051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "congressrepresentatives", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "representative_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["representative_id"], name: "index_congressrepresentatives_on_representative_id"
+    t.index ["user_id"], name: "index_congressrepresentatives_on_user_id"
+  end
 
   create_table "representatives", force: :cascade do |t|
     t.string "name"
@@ -79,6 +88,23 @@ ActiveRecord::Schema.define(version: 2019_08_10_175639) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "username"
+    t.string "password_digest"
+    t.string "street_address"
+    t.string "city"
+    t.string "user_state"
+    t.string "zipcode"
+    t.bigint "state_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["state_id"], name: "index_users_on_state_id"
+  end
+
+  add_foreign_key "congressrepresentatives", "representatives"
+  add_foreign_key "congressrepresentatives", "users"
   add_foreign_key "representatives", "states"
   add_foreign_key "senators", "states"
+  add_foreign_key "users", "states"
 end
