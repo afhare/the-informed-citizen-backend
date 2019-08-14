@@ -1,6 +1,7 @@
 require 'rest-client'
 require 'pry'
 require 'csv'
+require 'uri'
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
 #
@@ -9,9 +10,10 @@ require 'csv'
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-# google API Key = AIzaSyCWTpEcxECWnmZjKKQN_IkoKZad2G8x740
+# google_API_Key = AIzaSyCWTpEcxECWnmZjKKQN_IkoKZad2G8x740
 # pro_publica_API_key = '4oZZxKDuDfCLINOYoq3rriQgVzTsyzDyz0Fw8OdV'
 # open_secrets_API_key = 'cfa9bbaf09310e8550a687fa64d10751'
+
 Congressrepresentative.destroy_all
 Senator.destroy_all
 Representative.destroy_all
@@ -52,7 +54,11 @@ users = [
   {name: "Nate", username: "bunnyvoter", password: "pass789", street_address:"382 Metropolitan Ave" , city:"Brooklyn" , user_state:"NY", zipcode:"11211", state_id: State.find_by(abbreviation:"NY").id}
 ]
 
-users.each {|user| User.create(user)}
+google_API_Key = 'AIzaSyCWTpEcxECWnmZjKKQN_IkoKZad2G8x740'
+
+users.each do |user| 
+    User.create(user)
+end
 
 #HOUSE REPS
 PROPUBLICA_API_KEY = "4oZZxKDuDfCLINOYoq3rriQgVzTsyzDyz0Fw8OdV"
@@ -160,6 +166,41 @@ congressional_districts.each do |state|
             vacant_senator_state = State.find_by(abbreviation: state[:state_abbreviation])
             vacant_senator.state_id = vacant_senator_state.id
             vacant_senator.save
+        end
+    end
+end
+
+users.each do |user|
+    street = user[:street_address]
+    reformatted_street = street.split.join('%20')
+    city = user[:city]
+    reformatted_city = city.split.join('%20')
+    api_state = user[:user_state]
+
+    # google_API_Link = "https://www.googleapis.com/civicinfo/v2/elections?key=#{google_API_Link}"
+
+    # # google_API_Link = "https://www.googleapis.com/civicinfo/v2/voterinfo?key=#{google_API_Key}&address=#{reformatted_street}%20#{reformatted_city}%20#{api_state}"
+
+    google_API_Link = "https://www.googleapis.com/civicinfo/v2/representatives?key=#{google_API_Key}&address=#{reformatted_street}%20#{reformatted_city}%20#{api_state}"
+
+    google_API_response = RestClient::Request.execute(:method => :get, :url => google_API_Link, headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'key': google_API_Key})
+    google_API_array = JSON.parse(google_API_response)
+    
+    representatives = []
+    rep_names = Representative.all.map { |rep| rep.name }
+    sen_names = Senator.all.map { |sen| sen.name }
+    
+    google_API_array["officials"].each do |official| 
+        if rep_names.include?(official["name"]) || sen_names.include?(official["name"])
+            representatives.push(official["name"])
+            congressperson = Representative.find_by(name: official["name"])
+            if congressperson
+                user = User.find_by(username: user[:username])
+                connection = Congressrepresentative.new
+                connection.user_id = user.id
+                connection.representative_id = congressperson.id
+                connection.save
+            end
         end
     end
 end
