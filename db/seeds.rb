@@ -9,6 +9,7 @@ require 'csv'
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+# google API Key = AIzaSyCWTpEcxECWnmZjKKQN_IkoKZad2G8x740
 # pro_publica_API_key = '4oZZxKDuDfCLINOYoq3rriQgVzTsyzDyz0Fw8OdV'
 # open_secrets_API_key = 'cfa9bbaf09310e8550a687fa64d10751'
 Congressrepresentative.destroy_all

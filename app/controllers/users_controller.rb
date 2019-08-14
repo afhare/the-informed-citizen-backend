@@ -18,4 +18,10 @@ class UsersController < ApplicationController
             render json: { message: 'User not found'}
         end
     end
+
+    def create
+    end
+
+    def login
+    end
 end
