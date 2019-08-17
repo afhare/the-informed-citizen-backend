@@ -1,4 +1,5 @@
 class StatesController < ApplicationController
+    skip_before_action :authorized, only: [:index, :show]
     def index
         states = State.all 
         render json: states.to_json(:include => {

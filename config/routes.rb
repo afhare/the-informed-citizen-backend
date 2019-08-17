@@ -4,4 +4,7 @@ Rails.application.routes.draw do
   resources :representatives
   resources :senators
   resources :users
+
+  post '/login', to: 'users#login'
+  get '/profile', to: 'users#show'
 end

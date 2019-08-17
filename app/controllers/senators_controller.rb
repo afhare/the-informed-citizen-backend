@@ -1,4 +1,5 @@
 class SenatorsController < ApplicationController
+    skip_before_action :authorized, only: [:index, :show]
     def index
         senators = Senator.all 
         render json: senators.to_json(:include => {

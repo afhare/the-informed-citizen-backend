@@ -1,4 +1,6 @@
 class RepresentativesController < ApplicationController
+    skip_before_action :authorized, only: [:index, :show]
+
     def index
         representatives = Representative.all 
         render json: representatives.to_json(:include => {
