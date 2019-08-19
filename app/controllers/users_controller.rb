@@ -69,9 +69,42 @@ class UsersController < ApplicationController
         user = User.new(new_user_params)
         user.state = State.find_by(abbreviation: user.user_state)
 
-        if user.save
+        if user.valid?
+            user.save
+
+            google_API_Key = 'AIzaSyCWTpEcxECWnmZjKKQN_IkoKZad2G8x740'
+
+                updated_street = user[:street_address]
+                reformatted_street = updated_street.split.join('%20')
+                city = user[:city]
+                reformatted_city = city.split.join('%20')
+                api_state = user[:user_state]
+
+                google_API_Link = "https://www.googleapis.com/civicinfo/v2/representatives?key=#{google_API_Key}&address=#{reformatted_street}%20#{reformatted_city}%20#{api_state}"
+
+                google_API_response = RestClient::Request.execute(:method => :get, :url => google_API_Link, headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'key': google_API_Key})
+                google_API_array = JSON.parse(google_API_response)
+            
+                representatives = []
+                rep_names = Representative.all.map { |rep| rep.name }
+                sen_names = Senator.all.map { |sen| sen.name }
+                
+                google_API_array["officials"].each do |official| 
+                    if rep_names.include?(official["name"]) || sen_names.include?(official["name"])
+                        representatives.push(official["name"])
+                        congressperson = Representative.find_by(name: official["name"])
+                        if congressperson
+                            user = User.find_by(username: user[:username])
+                            connection = Congressrepresentative.new
+                            connection.user_id = user.id
+                            connection.representative_id = congressperson.id
+                            connection.save
+                        end
+                    end
+                end
+
             token = encode_token({user_id: user.id})
-            render json: {user: user, jwt: token}, status: :created
+            render json: {jwt: token, username: user.username, name: user.name, street_address: user.street_address, city: user.city, state: {abbreviation: user.user_state, id: user.state.id}, zipcode: user.zipcode, representatives: user.representatives, senators: user.senators}, status: :created
         else
             render json: {error: 'Unable to create user'}, status: :unaccepted
         end
@@ -87,9 +120,23 @@ class UsersController < ApplicationController
         end
     end
 
+    def destroy
+        user = User.find_by(username: delete_params[:username])
+        if user 
+            user.destroy
+            render json: {message: 'Successfully deleted user account.'}, status: :accepted 
+        else
+            render json: {error: 'Invalid request'}, status: :unauthorized
+        end
+    end
+
     private
         def login_params
             params.require(:user).permit(:username, :password)
+        end
+
+        def delete_params
+            params.require(:user).permit(:username)
         end
 
         def new_user_params

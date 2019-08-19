@@ -8,4 +8,6 @@ Rails.application.routes.draw do
   post '/login', to: 'users#login'
   get '/profile', to: 'users#show'
   post '/update-profile', to: 'users#update'
+  post '/register', to: 'users#create'
+  delete '/delete-user', to: 'users#destroy'
 end
