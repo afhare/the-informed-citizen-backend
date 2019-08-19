@@ -10,4 +10,6 @@ Rails.application.routes.draw do
   post '/update-profile', to: 'users#update'
   post '/register', to: 'users#create'
   delete '/delete-user', to: 'users#destroy'
+  post '/representatives-compare', to: 'representatives#compare'
+  post '/senators-compare', to: 'senators#compare'
 end
