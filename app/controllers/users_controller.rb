@@ -19,6 +19,52 @@ class UsersController < ApplicationController
         end
     end
 
+    def update
+        user = current_user
+        if user && State.find_by(abbreviation: update_user_params[:user_state])
+            user.assign_attributes(street_address: update_user_params[:street_address] , city: update_user_params[:city] , user_state: update_user_params[:user_state], zipcode: update_user_params[:zipcode], state_id: State.find_by(abbreviation: update_user_params[:user_state]).id)
+            if user.valid?
+                user.save
+
+                google_API_Key = 'AIzaSyCWTpEcxECWnmZjKKQN_IkoKZad2G8x740'
+
+                updated_street = user[:street_address]
+                reformatted_street = updated_street.split.join('%20')
+                city = user[:city]
+                reformatted_city = city.split.join('%20')
+                api_state = user[:user_state]
+
+                google_API_Link = "https://www.googleapis.com/civicinfo/v2/representatives?key=#{google_API_Key}&address=#{reformatted_street}%20#{reformatted_city}%20#{api_state}"
+
+                google_API_response = RestClient::Request.execute(:method => :get, :url => google_API_Link, headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'key': google_API_Key})
+                google_API_array = JSON.parse(google_API_response)
+            
+                representatives = []
+                rep_names = Representative.all.map { |rep| rep.name }
+                sen_names = Senator.all.map { |sen| sen.name }
+                
+                google_API_array["officials"].each do |official| 
+                    if rep_names.include?(official["name"]) || sen_names.include?(official["name"])
+                        representatives.push(official["name"])
+                        congressperson = Representative.find_by(name: official["name"])
+                        if congressperson
+                            user = User.find_by(username: user[:username])
+                            connection = Congressrepresentative.new
+                            connection.user_id = user.id
+                            connection.representative_id = congressperson.id
+                            connection.save
+                        end
+                    end
+                end
+                redirect_to user_path(user)
+            else 
+                render json: { message: 'Unable to update your profile with the information provided.'}
+            end
+        else
+            render json: { message: 'Unable to update your address. Please verify your account, and/or the address entered.'}
+        end
+    end
+
     def create
         user = User.new(new_user_params)
         user.state = State.find_by(abbreviation: user.user_state)
@@ -47,6 +93,10 @@ class UsersController < ApplicationController
         end
 
         def new_user_params
-            params.require(:user).permit(:name, :username, :password, :street_address, :city, :user_state, :zipcode)
+            params.require(:user).permit(:name, :username, :password, :address, :street_address, :city, :user_state, :zipcode)
+        end
+
+        def update_user_params
+            params.require(:user).permit(:name, :username, :password, :address, :street_address, :city, :user_state, :zipcode)
         end
 end

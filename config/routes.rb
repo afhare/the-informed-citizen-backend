@@ -7,4 +7,5 @@ Rails.application.routes.draw do
 
   post '/login', to: 'users#login'
   get '/profile', to: 'users#show'
+  post '/update-profile', to: 'users#update'
 end
