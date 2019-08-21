@@ -6,6 +6,6 @@ class User < ApplicationRecord
 
     belongs_to :state
     has_many :senators, through: :state
-    has_many :congressrepresentatives
+    has_many :congressrepresentatives, dependent: :destroy
     has_many :representatives, through: :congressrepresentatives
 end

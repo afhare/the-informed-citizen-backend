@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_13_153051) do
+ActiveRecord::Schema.define(version: 2019_08_19_193922) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,31 @@ ActiveRecord::Schema.define(version: 2019_08_13_153051) do
     t.datetime "updated_at", null: false
     t.index ["representative_id"], name: "index_congressrepresentatives_on_representative_id"
     t.index ["user_id"], name: "index_congressrepresentatives_on_user_id"
+  end
+
+  create_table "house_committees", force: :cascade do |t|
+    t.string "abbreviation"
+    t.string "name"
+    t.string "chair"
+    t.bigint "representative_id"
+    t.string "url"
+    t.string "subcommittees"
+    t.string "chamber"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["representative_id"], name: "index_house_committees_on_representative_id"
+  end
+
+  create_table "joint_committees", force: :cascade do |t|
+    t.string "abbreviation"
+    t.string "name"
+    t.string "chair"
+    t.bigint "representative_id"
+    t.string "url"
+    t.string "chamber"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["representative_id"], name: "index_joint_committees_on_representative_id"
   end
 
   create_table "representatives", force: :cascade do |t|
@@ -42,6 +67,19 @@ ActiveRecord::Schema.define(version: 2019_08_13_153051) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["state_id"], name: "index_representatives_on_state_id"
+  end
+
+  create_table "senate_committees", force: :cascade do |t|
+    t.string "abbreviation"
+    t.string "name"
+    t.string "chair"
+    t.bigint "senator_id"
+    t.string "url"
+    t.string "subcommittees"
+    t.string "chamber"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["senator_id"], name: "index_senate_committees_on_senator_id"
   end
 
   create_table "senators", force: :cascade do |t|
@@ -104,7 +142,10 @@ ActiveRecord::Schema.define(version: 2019_08_13_153051) do
 
   add_foreign_key "congressrepresentatives", "representatives"
   add_foreign_key "congressrepresentatives", "users"
+  add_foreign_key "house_committees", "representatives"
+  add_foreign_key "joint_committees", "representatives"
   add_foreign_key "representatives", "states"
+  add_foreign_key "senate_committees", "senators"
   add_foreign_key "senators", "states"
   add_foreign_key "users", "states"
 end
