@@ -10,19 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_19_193922) do
+ActiveRecord::Schema.define(version: 2019_08_28_201046) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "congressrepresentatives", force: :cascade do |t|
-    t.bigint "user_id"
-    t.bigint "representative_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["representative_id"], name: "index_congressrepresentatives_on_representative_id"
-    t.index ["user_id"], name: "index_congressrepresentatives_on_user_id"
-  end
 
   create_table "house_committees", force: :cascade do |t|
     t.string "abbreviation"
@@ -50,6 +41,7 @@ ActiveRecord::Schema.define(version: 2019_08_19_193922) do
   end
 
   create_table "representatives", force: :cascade do |t|
+    t.string "propublica_id"
     t.string "name"
     t.string "first_name"
     t.string "last_name"
@@ -58,6 +50,9 @@ ActiveRecord::Schema.define(version: 2019_08_19_193922) do
     t.string "chamber"
     t.string "party"
     t.string "new_york_times_url"
+    t.string "contact_form"
+    t.string "phone"
+    t.string "dc_office"
     t.string "twitter_id"
     t.string "facebook_account"
     t.string "seniority"
@@ -67,6 +62,24 @@ ActiveRecord::Schema.define(version: 2019_08_19_193922) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["state_id"], name: "index_representatives_on_state_id"
+  end
+
+  create_table "saved_representatives", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "representative_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["representative_id"], name: "index_saved_representatives_on_representative_id"
+    t.index ["user_id"], name: "index_saved_representatives_on_user_id"
+  end
+
+  create_table "saved_senators", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "senator_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["senator_id"], name: "index_saved_senators_on_senator_id"
+    t.index ["user_id"], name: "index_saved_senators_on_user_id"
   end
 
   create_table "senate_committees", force: :cascade do |t|
@@ -83,6 +96,7 @@ ActiveRecord::Schema.define(version: 2019_08_19_193922) do
   end
 
   create_table "senators", force: :cascade do |t|
+    t.string "propublica_id"
     t.string "name"
     t.string "first_name"
     t.string "last_name"
@@ -91,6 +105,9 @@ ActiveRecord::Schema.define(version: 2019_08_19_193922) do
     t.string "chamber"
     t.string "party"
     t.string "new_york_times_url"
+    t.string "contact_form"
+    t.string "phone"
+    t.string "dc_office"
     t.string "twitter_id"
     t.string "facebook_account"
     t.string "seniority"
@@ -130,21 +147,20 @@ ActiveRecord::Schema.define(version: 2019_08_19_193922) do
     t.string "name"
     t.string "username"
     t.string "password_digest"
-    t.string "street_address"
-    t.string "city"
     t.string "user_state"
-    t.string "zipcode"
     t.bigint "state_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["state_id"], name: "index_users_on_state_id"
   end
 
-  add_foreign_key "congressrepresentatives", "representatives"
-  add_foreign_key "congressrepresentatives", "users"
   add_foreign_key "house_committees", "representatives"
   add_foreign_key "joint_committees", "representatives"
   add_foreign_key "representatives", "states"
+  add_foreign_key "saved_representatives", "representatives"
+  add_foreign_key "saved_representatives", "users"
+  add_foreign_key "saved_senators", "senators"
+  add_foreign_key "saved_senators", "users"
   add_foreign_key "senate_committees", "senators"
   add_foreign_key "senators", "states"
   add_foreign_key "users", "states"

@@ -4,10 +4,7 @@ class CreateUsers < ActiveRecord::Migration[5.2]
       t.string :name
       t.string :username
       t.string :password_digest
-      t.string :street_address
-      t.string :city
       t.string :user_state
-      t.string :zipcode
       t.references :state, foreign_key: true
 
       t.timestamps
