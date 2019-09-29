@@ -1,11 +1,12 @@
 class User < ApplicationRecord
     has_secure_password
 
-    validates :name, :username, :user_state, :zipcode, presence: true
+    validates :name, :username, :user_state, presence: true
     validates :username, uniqueness: true
 
     belongs_to :state
-    has_many :senators, through: :state
-    has_many :congressrepresentatives, dependent: :destroy
-    has_many :representatives, through: :congressrepresentatives
+    has_many :saved_senators
+    has_many :senators, through: :saved_senators
+    has_many :saved_representatives
+    has_many :representatives, through: :saved_representatives
 end
