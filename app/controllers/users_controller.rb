@@ -22,7 +22,7 @@ class UsersController < ApplicationController
     def update
         user = current_user
         if user && State.find_by(abbreviation: update_user_params[:user_state])
-            user.assign_attributes(user_state: update_user_params[:user_state], zipcode: update_user_params[:zipcode], state_id: State.find_by(abbreviation: update_user_params[:user_state]).id)
+            user.assign_attributes(user_state: update_user_params[:user_state], state_id: State.find_by(abbreviation: update_user_params[:user_state]).id)
             if user.valid?
                 user.save
                 redirect_to user_path(user)
